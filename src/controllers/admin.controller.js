@@ -20,25 +20,13 @@ async function getAllOrders(req, res) {
   }
 }
 
-// GET /api/admin/users
-async function getAllUsers(req, res) {
-  try {
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
-    res.json(users);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error obteniendo usuarios' });
-  }
-}
-
 // PUT /api/admin/orders/:orderId/status
 async function updateOrderStatus(req, res) {
   const orderId = Number(req.params.orderId);
   const { status } = req.body;
 
   const allowed = ['PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED'];
+
   if (!allowed.includes(status)) {
     return res.status(400).json({ message: 'Estado no permitido' });
   }
@@ -55,4 +43,17 @@ async function updateOrderStatus(req, res) {
   }
 }
 
-module.exports = { getAllOrders, getAllUsers, updateOrderStatus };
+// GET /api/admin/users
+async function getAllUsers(req, res) {
+  try {
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error obteniendo usuarios' });
+  }
+}
+
+module.exports = { getAllOrders, updateOrderStatus, getAllUsers };

@@ -1,28 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-const authMiddleware = require('../middlewares/auth.middleware');
-const adminMiddleware = require('../middlewares/admin.middleware');
 const adminController = require('../controllers/admin.controller');
+const requireAuth = require('../middlewares/auth.middleware');
+const requireAdmin = require('../middlewares/admin.middleware');
 
-// Pedidos
-router.get('/orders',
-  authMiddleware,
-  adminMiddleware,
-  adminController.getAllOrders
-);
-
-router.put('/orders/:orderId/status',
-  authMiddleware,
-  adminMiddleware,
+// Pedidos (admin)
+router.get('/orders', requireAuth, requireAdmin, adminController.getAllOrders);
+router.put(
+  '/orders/:orderId/status',
+  requireAuth,
+  requireAdmin,
   adminController.updateOrderStatus
 );
 
-// Usuarios
-router.get('/users',
-  authMiddleware,
-  adminMiddleware,
-  adminController.getAllUsers
-);
+// Usuarios (admin)
+router.get('/users', requireAuth, requireAdmin, adminController.getAllUsers);
 
 module.exports = router;

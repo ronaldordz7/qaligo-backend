@@ -8,7 +8,7 @@ async function register({ name, email, password }) {
 
   const hashed = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
-    data: { name, email, password: hashed }
+    data: { name, email, password: hashed, role: "user"}
   });
 
   return user;
@@ -22,12 +22,24 @@ async function login({ email, password }) {
   if (!valid) throw new Error('INVALID_CREDENTIALS');
 
   const token = jwt.sign(
-    { sub: user.id, email: user.email },
+    { 
+      id: user.id,
+      email: user.email,
+      role: user.role   
+    },
     process.env.JWT_SECRET,
     { expiresIn: '8h' }
   );
 
-  return { user, token };
+  // Nunca devolver password al frontend
+  const safeUser = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role     
+  };
+
+  return { user: safeUser, token };
 }
 
 module.exports = { register, login };

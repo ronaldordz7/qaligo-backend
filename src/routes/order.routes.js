@@ -10,3 +10,8 @@ router.post('/', orderController.createOrder);
 router.get('/:userId', orderController.getOrdersByUser);
 
 module.exports = router;
+
+router.get('/admin/all', requireAuth, requireAdmin, orderController.getAllOrders);
+
+router.put('/admin/status/:orderId', requireAuth, requireAdmin, orderController.updateOrderStatus);
+

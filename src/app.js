@@ -13,9 +13,11 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5500",
-    "https://magical-swan-c1ea78.netlify.app"
+    "https://magical-swan-c1ea78.netlify.app",
+    "https://qaligo-backend.onrender.com"
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 

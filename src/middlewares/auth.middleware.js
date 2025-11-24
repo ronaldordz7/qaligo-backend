@@ -1,26 +1,28 @@
-const jwt = require('jsonwebtoken');
-
 function authMiddleware(req, res, next) {
   const header = req.headers.authorization;
+  console.log("🔍 HEADER:", header);
 
   if (!header) {
-    return res.status(401).json({ message: 'No token' });
+    return res.status(401).json({ message: "No token" });
   }
 
-  const [scheme, token] = header.split(' ');
+  const [scheme, token] = header.split(" ");
+  console.log("🔍 TOKEN RECIBIDO:", token);
 
-  if (scheme !== 'Bearer' || !token) {
-    return res.status(401).json({ message: 'Formato de token inválido' });
+  if (scheme !== "Bearer" || !token) {
+    return res.status(401).json({ message: "Token inválido" });
   }
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = payload; // { id, email, role, ... }
+    console.log("🔍 PAYLOAD DECODIFICADO:", payload); 
+    req.user = payload;
     next();
   } catch (err) {
-    console.error(err);
-    return res.status(401).json({ message: 'Token inválido' });
+    console.error("❌ ERROR VERIFICANDO TOKEN:", err);
+    return res.status(401).json({ message: "Token inválido" });
   }
 }
+
 
 module.exports = authMiddleware;

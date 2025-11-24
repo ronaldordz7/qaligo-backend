@@ -14,7 +14,6 @@ app.use(cors({
   origin: [
     "http://localhost:5500",
     "https://magical-swan-c1ea78.netlify.app",
-    "https://qaligo-backend.onrender.com",
     "https://qaligo-frontend.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -39,12 +38,11 @@ app.get('/api/health', (req, res) => {
 });
 
 // Solo levanta servidor si no estamos en testing
-if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Q'aliGo backend corriendo en http://localhost:${PORT}`);
-  });
-}
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Q'aliGo backend corriendo en http://localhost:${PORT}`);
+});
+
 
 // Exportar para testing, despliegue serverless u otros
 module.exports = app;

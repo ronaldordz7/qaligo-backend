@@ -5,17 +5,19 @@ async function getAllOrders(req, res) {
   try {
     const orders = await prisma.order.findMany({
       include: {
-        user: true,
-        orderItems: {
-          include: { product: true },
+        user: {
+          select: { id: true, name: true, email: true }
         },
+        orderItems: {
+          include: { product: true }
+        }
       },
       orderBy: { createdAt: 'desc' },
     });
 
     res.json(orders);
   } catch (err) {
-    console.error(err);
+    console.error("❌ getAllOrders:", err);
     res.status(500).json({ message: 'Error obteniendo pedidos' });
   }
 }
@@ -26,19 +28,28 @@ async function updateOrderStatus(req, res) {
   const { status } = req.body;
 
   const allowed = ['PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED'];
-
   if (!allowed.includes(status)) {
     return res.status(400).json({ message: 'Estado no permitido' });
   }
 
   try {
+    const order = await prisma.order.findUnique({
+      where: { id: orderId }
+    });
+
+    if (!order) {
+      return res.status(404).json({ message: "Pedido no encontrado" });
+    }
+
     const updated = await prisma.order.update({
       where: { id: orderId },
-      data: { status },
+      data: { status }
     });
+
     res.json(updated);
+
   } catch (err) {
-    console.error(err);
+    console.error("❌ updateOrderStatus:", err);
     res.status(500).json({ message: 'Error actualizando estado de pedido' });
   }
 }
@@ -48,10 +59,19 @@ async function getAllUsers(req, res) {
   try {
     const users = await prisma.user.findMany({
       orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true
+      }
     });
+
     res.json(users);
+
   } catch (err) {
-    console.error(err);
+    console.error("❌ getAllUsers:", err);
     res.status(500).json({ message: 'Error obteniendo usuarios' });
   }
 }
